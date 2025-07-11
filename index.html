@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journalism Agent Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 
+                0 32px 64px rgba(0, 0, 0, 0.12),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #c31432 0%, #240b36 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            animation: fadeInDown 0.6s ease-out 0.2s both;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+            font-weight: 300;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: linear-gradient(90deg, #f8f9fa 0%, #ffffff 100%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(135deg, #c31432 0%, #240b36 100%);
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-tab:hover {
+            color: #c31432;
+            background: rgba(195, 20, 50, 0.05);
+        }
+
+        .nav-tab.active {
+            color: #c31432;
+            background: white;
+        }
+
+        .nav-tab.active::before {
+            transform: translateX(0);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .tools-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1px;
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        .workflow-container {
+            padding: 32px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 32px;
+            background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .tool-card {
+            padding: 32px;
+            background: white;
+            min-height: 680px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .workflow-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .workflow-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #c31432 0%, #240b36 100%);
+        }
+
+        .workflow-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12);
+            border-color: rgba(195, 20, 50, 0.2);
+        }
+
+        .tool-title, .workflow-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1e293b;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tool-title::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c31432 0%, #240b36 100%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        .tool-description, .workflow-description {
+            font-size: 15px;
+            color: #64748b;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .input-area {
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        .input-area textarea {
+            width: 100%;
+            height: 220px;
+            padding: 20px;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 14px;
+            resize: vertical;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fafbfc;
+        }
+
+        .input-area textarea:focus {
+            border-color: #c31432;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(195, 20, 50, 0.1);
+            transform: scale(1.01);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fafbfc;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #c31432;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(195, 20, 50, 0.1);
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .convert-btn, .workflow-btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #c31432 0%, #240b36 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .convert-btn::before, .workflow-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .convert-btn:hover, .workflow-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(195, 20, 50, 0.3);
+        }
+
+        .convert-btn:hover::before, .workflow-btn:hover::before {
+            left: 100%;
+        }
+
+        .convert-btn:active, .workflow-btn:active {
+            transform: translateY(0);
+        }
+
+        .convert-btn:disabled, .workflow-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .secondary-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 10px 18px;
+            font-size: 14px;
+            margin-left: 12px;
+            display: inline-block;
+            width: auto;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .secondary-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .output-area {
+            margin-top: 20px;
+            padding: 24px;
+            background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            min-height: 120px;
+            font-family: 'Georgia', serif;
+            font-size: 15px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .output-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #c31432 0%, #240b36 100%);
+            border-radius: 0 2px 2px 0;
+        }
+
+        .output-area.empty {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        .copy-btn {
+            margin-top: 12px;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .processing {
+            color: #c31432;
+            font-style: italic;
+            position: relative;
+        }
+
+        .processing::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        .data-list {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            max-height: 340px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .data-item {
+            padding: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .data-item:last-child {
+            border-bottom: none;
+        }
+
+        .data-item:hover {
+            background: linear-gradient(145deg, #f8f9fa 0%, #ffffff 100%);
+            transform: translateX(4px);
+        }
+
+        .data-item-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 6px;
+            font-size: 16px;
+        }
+
+        .data-item-meta {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .data-item-description {
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            margin-top: 8px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fafbfc;
+        }
+
+        .search-box:focus {
+            border-color: #c31432;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(195, 20, 50, 0.1);
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(195, 20, 50, 0.1) 0%, rgba(36, 11, 54, 0.05) 100%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 10%;
+            left: 80%;
+            animation-delay: 0s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 60%;
+            left: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            top: 80%;
+            left: 70%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(10px) rotate(240deg); }
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .tools-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .workflow-container {
+                grid-template-columns: 1fr;
+                padding: 20px;
+                gap: 20px;
+            }
+            
+            .nav-tab {
+                font-size: 14px;
+                padding: 16px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .header p {
+                font-size: 16px;
+            }
+
+            .tool-card, .workflow-card {
+                padding: 24px;
+            }
+        }
+
+        /* Custom scrollbar */
+        .data-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .data-list::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        .data-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #c31432 0%, #240b36 100%);
+            border-radius: 10px;
+        }
+
+        .data-list::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #a91229 0%, #1e0a2e 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>Journalism Agent Pro</h1>
+                <p>AI-powered newsroom toolkit for professional content conversion and workflow management</p>
+            </div>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" id="contentTab">Content Tools</button>
+            <button class="nav-tab" id="workflowTab">Workflow Management</button>
+        </div>
+
+        <!-- Content Tools Tab -->
+        <div class="tab-content active" id="content">
+            <div class="tools-container">
+                <!-- TV Script to AP Style -->
+                <div class="tool-card">
+                    <div class="tool-title">TV Script to AP Style</div>
+                    <div class="tool-description">
+                        Transform broadcast scripts into professional AP Style news stories using advanced AI that understands journalistic standards and maintains factual accuracy.
+                    </div>
+                    <div class="input-area">
+                        <textarea id="tvScript" placeholder="Paste your TV script here...
+
+Example:
+ANCHOR: Good evening. A massive fire broke out at the downtown warehouse district today. Three buildings were destroyed and two firefighters were injured. The blaze started around 2 PM and took crews four hours to contain. Fire Chief Johnson says the cause is still under investigation.
+
+SOT: FIRE CHIEF JOHNSON
+'This was one of the most challenging fires we've faced this year. The wind made it particularly difficult.'
+
+ANCHOR: The warehouse stored mostly furniture and electronics. No civilians were hurt but damage is estimated at two million dollars."></textarea>
+                    </div>
+                    <button class="convert-btn" id="convertAPBtn">Convert to AP Style</button>
+                    <button class="secondary-btn" id="clearAPBtn">Clear</button>
+                    <div class="output-area empty" id="apOutput">AP Style story will appear here...</div>
+                    <button class="copy-btn" id="apCopy" style="display: none;">Copy AP Story</button>
+                </div>
+
+                <!-- Text to VOSOT -->
+                <div class="tool-card">
+                    <div class="tool-title">Text to VOSOT</div>
+                    <div class="tool-description">
+                        Convert any written content into professional VOSOT (Voice Over Sound On Tape) format with intelligent content splitting and broadcast formatting standards.
+                    </div>
+                    <div class="input-area">
+                        <textarea id="textInput" placeholder="Paste any text here to convert to VOSOT format...
+
+Example:
+The city council voted 5-2 today to approve the new downtown development project. Mayor Smith said the project will create 500 jobs and bring in millions in tax revenue. However, some residents are concerned about traffic and parking issues. Construction is expected to begin next spring."></textarea>
+                    </div>
+                    <button class="convert-btn" id="convertVOSOTBtn">Convert to VOSOT</button>
+                    <button class="secondary-btn" id="clearVOSOTBtn">Clear</button>
+                    <div class="output-area empty" id="vosotOutput">VOSOT format will appear here...</div>
+                    <button class="copy-btn" id="vosotCopy" style="display: none;">Copy VOSOT</button>
+                </div>
+
+                <!-- Headline Generator -->
+                <div class="tool-card">
+                    <div class="tool-title">Headline Generator</div>
+                    <div class="tool-description">
+                        Generate multiple compelling, SEO-optimized headlines that grab attention while maintaining journalistic integrity and factual accuracy for different platforms.
+                    </div>
+                    <div class="input-area">
+                        <textarea id="headlineInput" placeholder="Paste your story text here for headline generation...
+
+Example:
+Police arrested a 34-year-old man after he allegedly stole a city bus and led officers on a 20-minute chase through downtown streets. The suspect, identified as Robert Martinez, was taken into custody without incident after the bus ran out of fuel. No passengers were on board and no injuries were reported."></textarea>
+                    </div>
+                    <button class="convert-btn" id="generateHeadlineBtn">Generate Headlines</button>
+                    <button class="secondary-btn" id="clearHeadlineBtn">Clear</button>
+                    <div class="output-area empty" id="headlineOutput">Headlines will appear here...</div>
+                    <button class="copy-btn" id="headlineCopy" style="display: none;">Copy Headlines</button>
+                </div>
+
+                <!-- Tease Generator -->
+                <div class="tool-card">
+                    <div class="tool-title">Two-Sentence Tease</div>
+                    <div class="tool-description">
+                        Create compelling two-sentence broadcast teases that build audience intrigue and drive viewership using proven storytelling techniques and broadcast standards.
+                    </div>
+                    <div class="input-area">
+                        <textarea id="teaseInput" placeholder="Paste your story text here for tease generation...
+
+Example:
+A local restaurant owner discovered a hidden room behind a wall during renovations this week. Inside, workers found dozens of bottles of prohibition-era whiskey, vintage newspapers from the 1920s, and a handwritten journal detailing the building's history as a speakeasy."></textarea>
+                    </div>
+                    <button class="convert-btn" id="generateTeaseBtn">Generate Tease</button>
+                    <button class="secondary-btn" id="clearTeaseBtn">Clear</button>
+                    <div class="output-area empty" id="teaseOutput">Two-sentence tease will appear here...</div>
+                    <button class="copy-btn" id="teaseCopy" style="display: none;">Copy Tease</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow Management Tab -->
+        <div class="tab-content" id="workflow">
+            <div class="workflow-container">
+                <!-- Assignment Tracker -->
+                <div class="workflow-card">
+                    <div class="workflow-title">Assignment Tracker</div>
+                    <div class="workflow-description">Manage story assignments, deadlines, and editorial coordination with comprehensive tracking and organization capabilities.</div>
+                    
+                    <div class="form-group">
+                        <label>Story Title</label>
+                        <input type="text" id="assignmentTitle" placeholder="Enter story title">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Reporter</label>
+                        <input type="text" id="assignmentReporter" placeholder="Reporter name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Deadline</label>
+                        <input type="datetime-local" id="assignmentDeadline">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="assignmentPriority">
+                            <option value="low">Low Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="high">High Priority</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Assignment Notes</label>
+                        <textarea id="assignmentNotes" placeholder="Assignment details, contacts, background information, specific requirements..."></textarea>
+                    </div>
+                    
+                    <button class="workflow-btn" id="addAssignmentBtn">Add Assignment</button>
+                    
+                    <input type="text" class="search-box" id="assignmentSearch" placeholder="Search assignments...">
+                    
+                    <div class="data-list" id="assignmentsList">
+                        <div class="data-item">
+                            <div class="data-item-title">Sample: City Budget Meeting Coverage</div>
+                            <div class="data-item-meta">Reporter: Jane Smith | Due: Today 6:00 PM</div>
+                            <div class="data-item-description">Cover city council budget discussion. Contact Mayor Johnson for statement on proposed tax increases.</div>
+                            <span class="status-badge">In Progress</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Source Database -->
+                <div class="workflow-card">
+                    <div class="workflow-title">Source Database</div>
+                    <div class="workflow-description">Maintain comprehensive contact database of expert sources organized by beat coverage and expertise areas.</div>
+                    
+                    <div class="form-group">
+                        <label>Contact Name</label>
+                        <input type="text" id="sourceName" placeholder="Expert or source name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Title and Position</label>
+                        <input type="text" id="sourceTitle" placeholder="Job title or professional position">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Organization</label>
+                        <input type="text" id="sourceOrg" placeholder="Company, agency, or organization">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Beat Category</label>
+                        <select id="sourceBeat">
+                            <option value="politics">Politics</option>
+                            <option value="crime">Crime</option>
+                            <option value="education">Education</option>
+                            <option value="health">Health</option>
+                            <option value="business">Business</option>
+                            <option value="sports">Sports</option>
+                            <option value="weather">Weather</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="sourcePhone" placeholder="Primary phone number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="sourceEmail" placeholder="Email address">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Expertise and Notes</label>
+                        <textarea id="sourceNotes" placeholder="Areas of expertise, previous quotes, reliability notes, best times to contact..."></textarea>
+                    </div>
+                    
+                    <button class="workflow-btn" id="addSourceBtn">Add Source</button>
+                    
+                    <input type="text" class="search-box" id="sourceSearch" placeholder="Search sources...">
+                    
+                    <div class="data-list" id="sourcesList">
+                        <div class="data-item">
+                            <div class="data-item-title">Dr. Sarah Wilson</div>
+                            <div class="data-item-meta">Health Department Director | Health Beat</div>
+                            <div class="data-item-description">Public health expert specializing in disease outbreaks and health policy. Very responsive to media requests and provides clear, quotable statements.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize everything when DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            class JournalismAgentAI {
+                constructor() {
+                    this.assignments = JSON.parse(localStorage.getItem('assignments') || '[]');
+                    this.sources = JSON.parse(localStorage.getItem('sources') || '[]');
+                }
+
+                // AI-powered conversion using Claude API via Vercel
+                async callAI(prompt, content) {
+                    try {
+                        const response = await fetch('/api/ai-convert', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                prompt: prompt,
+                                content: content
+                            })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+                        }
+
+                        const data = await response.json();
+                        
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
+                        
+                        return data.result;
+                    } catch (error) {
+                        console.error('AI API Error:', error);
+                        throw new Error(`Failed to process request: ${error.message}`);
+                    }
+                }
+
+                async convertTvScriptToAP(script) {
+                    const prompt = `You are an expert AP Style editor for a major news organization. Convert this TV script to proper AP Style format following all Associated Press guidelines.
+
+STRICT AP STYLE REQUIREMENTS:
+- Remove ALL TV formatting (ANCHOR:, SOT:, REPORTER:, etc.)
+- Use proper AP Style for numbers (spell out one through nine, use figures for 10 and above)
+- Use AP Style for time (3 p.m., not 3:00 PM or 3:00 p.m.)
+- Use AP Style for dates (Jan. 15, not January 15th)
+- Use AP Style for titles (capitalize before names, lowercase after)
+- Use AP Style for state abbreviations (Calif., not CA or California in datelines)
+- Use AP Style for addresses (123 Main St., not 123 Main Street)
+- Convert quotes to proper attribution format ("Quote," Person said.)
+- Use active voice and past tense
+- Follow inverted pyramid structure
+- Create proper paragraphs with one main idea each
+- Use attribution for all statements and quotes
+- Maintain all factual content exactly as stated
+- Use AP Style for organizations, government titles, and proper nouns
+- Follow AP guidelines for punctuation and capitalization
+
+TV Script to convert:
+${script}
+
+Return ONLY the properly formatted AP Style news story. No explanations, metadata, or additional text.`;
+
+                    return await this.callAI(prompt, script);
+                }
+
+                async convertToVOSOT(text) {
+                    const prompt = `You are a broadcast news producer. Convert this text into proper VOSOT (Voice Over Sound On Tape) format for television news.
+
+VOSOT FORMAT REQUIREMENTS:
+- Split content between VO (Voice Over) and SOT (Sound On Tape) sections
+- VO section: ALL CAPS, anchor's setup and context
+- SOT section: Start with "sot:" in lowercase, followed by ALL CAPS content
+- VO should be 2-3 sentences maximum
+- SOT should be the most impactful, quotable part
+- Total length should be 20-30 seconds when read aloud
+- Use present tense and broadcast writing style
+- Make natural break between VO and SOT
+- VO sets up what SOT will reveal
+- Ensure smooth flow and timing
+
+Text to convert:
+${text}
+
+Return ONLY the VOSOT format with VO in ALL CAPS and SOT in lowercase "sot:" followed by ALL CAPS. No explanations.`;
+
+                    return await this.callAI(prompt, text);
+                }
+
+                async generateHeadlines(text) {
+                    const prompt = `You are a headline editor for a major news organization. Generate 3 different compelling headlines for this story.
+
+HEADLINE REQUIREMENTS:
+- Create exactly 3 headlines in different styles:
+  1. BREAKING NEWS style (urgent, immediate impact)
+  2. FEATURE style (storytelling, human interest angle)  
+  3. SOCIAL MEDIA style (engaging, shareable, includes key detail)
+- Each headline 6-12 words maximum
+- Must be factually accurate, no sensationalism
+- Use active voice and strong action verbs
+- Include the most newsworthy element
+- ALL CAPS format for broadcast use
+- No clickbait - maintain journalistic credibility
+- Each should emphasize different angle
+
+Story content:
+${text}
+
+Format response as:
+BREAKING: [HEADLINE IN ALL CAPS]
+FEATURE: [HEADLINE IN ALL CAPS] 
+SOCIAL: [HEADLINE IN ALL CAPS]`;
+
+                    return await this.callAI(prompt, text);
+                }
+
+                async generateTease(text) {
+                    const prompt = `You are a broadcast news producer creating teases for television. Write a compelling 2-sentence tease for this story.
+
+BROADCAST TEASE REQUIREMENTS:
+- Exactly 2 sentences in ALL CAPS
+- First sentence: Create intrigue without revealing the outcome
+- Second sentence: Establish stakes or forward momentum
+- Use present tense and active voice
+- Build curiosity that makes viewers stay tuned
+- Don't give away the complete story
+- Include emotional hook or human impact
+- Total length 15-25 seconds when read aloud
+- End with what's happening next or ongoing development
+- Broadcast-ready formatting in ALL CAPS
+
+Story content:
+${text}
+
+Return ONLY the 2-sentence tease in ALL CAPS format. No explanations or additional text.`;
+
+                    return await this.callAI(prompt, text);
+                }
+
+                // Workflow management functions
+                addAssignment(title, reporter, deadline, priority, notes) {
+                    const assignment = {
+                        id: Date.now(),
+                        title: title,
+                        reporter: reporter,
+                        deadline: deadline,
+                        priority: priority,
+                        notes: notes,
+                        status: 'pending',
+                        created: new Date().toISOString()
+                    };
+
+                    this.assignments.push(assignment);
+                    localStorage.setItem('assignments', JSON.stringify(this.assignments));
+                    this.displayAssignments();
+                }
+
+                addSource(name, title, org, beat, phone, email, notes) {
+                    const source = {
+                        id: Date.now(),
+                        name: name,
+                        title: title,
+                        organization: org,
+                        beat: beat,
+                        phone: phone,
+                        email: email,
+                        notes: notes,
+                        created: new Date().toISOString()
+                    };
+
+                    this.sources.push(source);
+                    localStorage.setItem('sources', JSON.stringify(this.sources));
+                    this.displaySources();
+                }
+
+                displayAssignments() {
+                    const container = document.getElementById('assignmentsList');
+                    container.innerHTML = '';
+
+                    this.assignments.forEach(assignment => {
+                        const item = document.createElement('div');
+                        item.className = 'data-item';
+                        item.innerHTML = `
+                            <div class="data-item-title">${assignment.title}</div>
+                            <div class="data-item-meta">Reporter: ${assignment.reporter} | Due: ${new Date(assignment.deadline).toLocaleString()}</div>
+                            <div class="data-item-description">${assignment.notes}</div>
+                            <span class="status-badge">${assignment.status}</span>
+                        `;
+                        container.appendChild(item);
+                    });
+                }
+
+                displaySources() {
+                    const container = document.getElementById('sourcesList');
+                    container.innerHTML = '';
+
+                    this.sources.forEach(source => {
+                        const item = document.createElement('div');
+                        item.className = 'data-item';
+                        item.innerHTML = `
+                            <div class="data-item-title">${source.name}</div>
+                            <div class="data-item-meta">${source.title} | ${source.organization} | ${source.beat}</div>
+                            <div class="data-item-description">${source.phone} | ${source.email}<br>${source.notes}</div>
+                        `;
+                        container.appendChild(item);
+                    });
+                }
+
+                showError(elementId, message) {
+                    const outputElement = document.getElementById(elementId);
+                    outputElement.innerHTML = `<div class="error-message">Error: ${message}</div>`;
+                    outputElement.className = 'output-area';
+                }
+            }
+
+            // Initialize the AI agent
+            const agent = new JournalismAgentAI();
+
+            // Tab switching with animation
+            document.getElementById('contentTab').addEventListener('click', function() {
+                document.getElementById('content').classList.add('active');
+                document.getElementById('workflow').classList.remove('active');
+                document.getElementById('contentTab').classList.add('active');
+                document.getElementById('workflowTab').classList.remove('active');
+            });
+
+            document.getElementById('workflowTab').addEventListener('click', function() {
+                document.getElementById('workflow').classList.add('active');
+                document.getElementById('content').classList.remove('active');
+                document.getElementById('workflowTab').classList.add('active');
+                document.getElementById('contentTab').classList.remove('active');
+            });
+
+            // AI-powered content conversion functions
+            document.getElementById('convertAPBtn').addEventListener('click', async function() {
+                const input = document.getElementById('tvScript').value.trim();
+                const output = document.getElementById('apOutput');
+                const copyBtn = document.getElementById('apCopy');
+                const btn = this;
+                
+                if (!input) {
+                    output.textContent = 'Please enter a TV script to convert.';
+                    output.className = 'output-area empty';
+                    copyBtn.style.display = 'none';
+                    return;
+                }
+                
+                btn.disabled = true;
+                output.textContent = 'Converting to AP Style using AI';
+                output.className = 'output-area processing';
+                copyBtn.style.display = 'none';
+                
+                try {
+                    const result = await agent.convertTvScriptToAP(input);
+                    output.textContent = result;
+                    output.className = 'output-area';
+                    copyBtn.style.display = 'block';
+                } catch (error) {
+                    agent.showError('apOutput', 'Failed to convert script. Please check your API configuration.');
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+
+            document.getElementById('convertVOSOTBtn').addEventListener('click', async function() {
+                const input = document.getElementById('textInput').value.trim();
+                const output = document.getElementById('vosotOutput');
+                const copyBtn = document.getElementById('vosotCopy');
+                const btn = this;
+                
+                if (!input) {
+                    output.textContent = 'Please enter text to convert to VOSOT format.';
+                    output.className = 'output-area empty';
+                    copyBtn.style.display = 'none';
+                    return;
+                }
+                
+                btn.disabled = true;
+                output.textContent = 'Converting to VOSOT format using AI';
+                output.className = 'output-area processing';
+                copyBtn.style.display = 'none';
+                
+                try {
+                    const result = await agent.convertToVOSOT(input);
+                    output.textContent = result;
+                    output.className = 'output-area';
+                    copyBtn.style.display = 'block';
+                } catch (error) {
+                    agent.showError('vosotOutput', 'Failed to convert to VOSOT. Please check your API configuration.');
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+
+            document.getElementById('generateHeadlineBtn').addEventListener('click', async function() {
+                const input = document.getElementById('headlineInput').value.trim();
+                const output = document.getElementById('headlineOutput');
+                const copyBtn = document.getElementById('headlineCopy');
+                const btn = this;
+                
+                if (!input) {
+                    output.textContent = 'Please enter text to generate headlines.';
+                    output.className = 'output-area empty';
+                    copyBtn.style.display = 'none';
+                    return;
+                }
+                
+                btn.disabled = true;
+                output.textContent = 'Generating headlines using AI';
+                output.className = 'output-area processing';
+                copyBtn.style.display = 'none';
+                
+                try {
+                    const result = await agent.generateHeadlines(input);
+                    output.textContent = result;
+                    output.className = 'output-area';
+                    copyBtn.style.display = 'block';
+                } catch (error) {
+                    agent.showError('headlineOutput', 'Failed to generate headlines. Please check your API configuration.');
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+
+            document.getElementById('generateTeaseBtn').addEventListener('click', async function() {
+                const input = document.getElementById('teaseInput').value.trim();
+                const output = document.getElementById('teaseOutput');
+                const copyBtn = document.getElementById('teaseCopy');
+                const btn = this;
+                
+                if (!input) {
+                    output.textContent = 'Please enter text to generate a tease.';
+                    output.className = 'output-area empty';
+                    copyBtn.style.display = 'none';
+                    return;
+                }
+                
+                btn.disabled = true;
+                output.textContent = 'Generating tease using AI';
+                output.className = 'output-area processing';
+                copyBtn.style.display = 'none';
+                
+                try {
+                    const result = await agent.generateTease(input);
+                    output.textContent = result;
+                    output.className = 'output-area';
+                    copyBtn.style.display = 'block';
+                } catch (error) {
+                    agent.showError('teaseOutput', 'Failed to generate tease. Please check your API configuration.');
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+
+            // Workflow functions
+            document.getElementById('addAssignmentBtn').addEventListener('click', function() {
+                const title = document.getElementById('assignmentTitle').value;
+                const reporter = document.getElementById('assignmentReporter').value;
+                const deadline = document.getElementById('assignmentDeadline').value;
+                const priority = document.getElementById('assignmentPriority').value;
+                const notes = document.getElementById('assignmentNotes').value;
+                
+                if (!title || !reporter) {
+                    alert('Please fill in title and reporter fields');
+                    return;
+                }
+                
+                agent.addAssignment(title, reporter, deadline, priority, notes);
+                
+                // Clear form with animation
+                const inputs = ['assignmentTitle', 'assignmentReporter', 'assignmentDeadline', 'assignmentNotes'];
+                inputs.forEach(id => {
+                    const element = document.getElementById(id);
+                    element.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        element.value = '';
+                        element.style.transform = 'scale(1)';
+                    }, 200);
+                });
+            });
+
+            document.getElementById('addSourceBtn').addEventListener('click', function() {
+                const name = document.getElementById('sourceName').value;
+                const title = document.getElementById('sourceTitle').value;
+                const org = document.getElementById('sourceOrg').value;
+                const beat = document.getElementById('sourceBeat').value;
+                const phone = document.getElementById('sourcePhone').value;
+                const email = document.getElementById('sourceEmail').value;
+                const notes = document.getElementById('sourceNotes').value;
+                
+                if (!name || !title) {
+                    alert('Please fill in name and title fields');
+                    return;
+                }
+                
+                agent.addSource(name, title, org, beat, phone, email, notes);
+                
+                // Clear form with animation
+                const inputs = ['sourceName', 'sourceTitle', 'sourceOrg', 'sourcePhone', 'sourceEmail', 'sourceNotes'];
+                inputs.forEach(id => {
+                    const element = document.getElementById(id);
+                    element.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        element.value = '';
+                        element.style.transform = 'scale(1)';
+                    }, 200);
+                });
+            });
+
+            // Copy functions with enhanced feedback
+            function setupCopyButton(btnId, outputId) {
+                document.getElementById(btnId).addEventListener('click', function() {
+                    const output = document.getElementById(outputId);
+                    const text = output.textContent;
+                    
+                    navigator.clipboard.writeText(text).then(() => {
+                        const btn = this;
+                        const originalText = btn.textContent;
+                        const originalBg = btn.style.background;
+                        
+                        btn.textContent = 'Copied!';
+                        btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                        btn.style.transform = 'scale(1.05)';
+                        
+                        setTimeout(() => {
+                            btn.textContent = originalText;
+                            btn.style.background = originalBg;
+                            btn.style.transform = 'scale(1)';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy text: ', err);
+                    });
+                });
+            }
+
+            setupCopyButton('apCopy', 'apOutput');
+            setupCopyButton('vosotCopy', 'vosotOutput');
+            setupCopyButton('headlineCopy', 'headlineOutput');
+            setupCopyButton('teaseCopy', 'teaseOutput');
+
+            // Clear button functions with smooth animations
+            function setupClearButton(btnId, inputId, outputId, copyBtnId) {
+                document.getElementById(btnId).addEventListener('click', function() {
+                    const input = document.getElementById(inputId);
+                    const output = document.getElementById(outputId);
+                    const copyBtn = document.getElementById(copyBtnId);
+                    
+                    // Animate clear action
+                    input.style.transform = 'scale(0.98)';
+                    output.style.transform = 'scale(0.98)';
+                    
+                    setTimeout(() => {
+                        input.value = '';
+                        output.textContent = outputId === 'apOutput' ? 'AP Style story will appear here...' :
+                                           outputId === 'vosotOutput' ? 'VOSOT format will appear here...' :
+                                           outputId === 'headlineOutput' ? 'Headlines will appear here...' :
+                                           'Two-sentence tease will appear here...';
+                        output.className = 'output-area empty';
+                        copyBtn.style.display = 'none';
+                        
+                        input.style.transform = 'scale(1)';
+                        output.style.transform = 'scale(1)';
+                    }, 200);
+                });
+            }
+
+            setupClearButton('clearAPBtn', 'tvScript', 'apOutput', 'apCopy');
+            setupClearButton('clearVOSOTBtn', 'textInput', 'vosotOutput', 'vosotCopy');
+            setupClearButton('clearHeadlineBtn', 'headlineInput', 'headlineOutput', 'headlineCopy');
+            setupClearButton('clearTeaseBtn', 'teaseInput', 'teaseOutput', 'teaseCopy');
+
+            // Search functions with real-time filtering
+            document.getElementById('assignmentSearch').addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                const items = document.querySelectorAll('#assignmentsList .data-item');
+                
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        item.style.display = 'block';
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateX(0)';
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateX(-10px)';
+                        setTimeout(() => {
+                            if (item.style.opacity === '0') {
+                                item.style.display = 'none';
+                            }
+                        }, 300);
+                    }
+                });
+            });
+
+            document.getElementById('sourceSearch').addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                const items = document.querySelectorAll('#sourcesList .data-item');
+                
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        item.style.display = 'block';
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateX(0)';
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateX(-10px)';
+                        setTimeout(() => {
+                            if (item.style.opacity === '0') {
+                                item.style.display = 'none';
+                            }
+                        }, 300);
+                    }
+                });
+            });
+
+            // Initialize displays
+            agent.displayAssignments();
+            agent.displaySources();
+
+            // Enhanced keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    const activeElement = document.activeElement;
+                    if (activeElement.tagName === 'TEXTAREA') {
+                        // Add visual feedback
+                        activeElement.style.borderColor = '#10b981';
+                        setTimeout(() => {
+                            activeElement.style.borderColor = '';
+                        }, 300);
+                        
+                        if (activeElement.id === 'tvScript') {
+                            document.getElementById('convertAPBtn').click();
+                        } else if (activeElement.id === 'textInput') {
+                            document.getElementById('convertVOSOTBtn').click();
+                        } else if (activeElement.id === 'headlineInput') {
+                            document.getElementById('generateHeadlineBtn').click();
+                        } else if (activeElement.id === 'teaseInput') {
+                            document.getElementById('generateTeaseBtn').click();
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
