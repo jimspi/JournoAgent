@@ -920,60 +920,69 @@ A local restaurant owner discovered a hidden room behind a wall during renovatio
                 }
 
                 async convertTvScriptToAP(script) {
-                    const prompt = `You are an expert AP Style editor for a major news organization. Convert this TV script to proper AP Style format following all Associated Press guidelines.
+                    const prompt = `You are an expert AP Style editor for a major digital news organization. Convert this TV script to proper AP Style format for digital publication following all Associated Press guidelines.
 
-STRICT AP STYLE REQUIREMENTS:
+STRICT AP STYLE REQUIREMENTS FOR DIGITAL:
 - Remove ALL TV formatting (ANCHOR:, SOT:, REPORTER:, etc.)
 - Use proper AP Style for numbers (spell out one through nine, use figures for 10 and above)
 - Use AP Style for time (3 p.m., not 3:00 PM or 3:00 p.m.)
 - Use AP Style for dates (Jan. 15, not January 15th)
 - Use AP Style for titles (capitalize before names, lowercase after)
-- Use AP Style for state abbreviations (Calif., not CA or California in datelines)
+- Use AP Style for state abbreviations in datelines
 - Use AP Style for addresses (123 Main St., not 123 Main Street)
 - Convert quotes to proper attribution format ("Quote," Person said.)
-- Use active voice and past tense
-- Follow inverted pyramid structure
+- Use active voice and past tense for digital format
+- Follow inverted pyramid structure with compelling lead
 - Create proper paragraphs with one main idea each
 - Use attribution for all statements and quotes
 - Maintain all factual content exactly as stated
+- Format for digital consumption with appropriate paragraph breaks
+- Include relevant context and background for online readers
 - Use AP Style for organizations, government titles, and proper nouns
 - Follow AP guidelines for punctuation and capitalization
+- Write for digital audience with clear, concise sentences
 
 TV Script to convert:
 ${script}
 
-Return ONLY the properly formatted AP Style news story. No explanations, metadata, or additional text.`;
+Return ONLY the properly formatted AP Style digital news story. No explanations, metadata, or additional text.`;
 
                     return await this.callAI(prompt, script);
                 }
 
                 async convertToVOSOT(text) {
-                    const prompt = `You are a broadcast news producer. Convert this text into proper VOSOT (Voice Over Sound On Tape) format for television news.
+                    const prompt = `You are a broadcast news producer. Convert this text into proper VOSOT (Voice Over Sound On Tape) format for television news with complete technical specifications.
 
-VOSOT FORMAT REQUIREMENTS:
-- Split content between VO (Voice Over) and SOT (Sound On Tape) sections
-- VO section: ALL CAPS, anchor's setup and context
-- SOT section: Start with "sot:" in lowercase, followed by ALL CAPS content
-- VO should be 2-3 sentences maximum
-- SOT should be the most impactful, quotable part
+VOSOT TECHNICAL FORMAT REQUIREMENTS:
+- ALL ANCHOR COPY: Complete sentences in ALL CAPS for teleprompter
+- SOT sections: "sot:" in lowercase followed by proper video clip identification
+- Include video clip names when possible (SMITH_INTERVIEW_01, FIRE_SCENE_02, etc.)
+- Include accurate timecodes in format [00:15-00:32] when available
+- VO should be 2-3 sentences maximum in ALL CAPS
+- SOT should identify the most impactful, quotable part with technical specs
 - Total length should be 20-30 seconds when read aloud
-- Use present tense and broadcast writing style
-- Make natural break between VO and SOT
+- Use present tense and broadcast writing style for anchor copy
+- Make natural break between VO and SOT sections
 - VO sets up what SOT will reveal
-- Ensure smooth flow and timing
+- Ensure smooth flow and proper timing for broadcast
 
 Text to convert:
 ${text}
 
-Return ONLY the VOSOT format with VO in ALL CAPS and SOT in lowercase "sot:" followed by ALL CAPS. No explanations.`;
+Return ONLY the VOSOT format with:
+- ANCHOR COPY IN ALL CAPS
+- sot: [clip_name_##] [timecode if available] lowercase identifier
+- All technical broadcast specifications included
+
+No explanations or additional text.`;
 
                     return await this.callAI(prompt, text);
                 }
 
                 async generateHeadlines(text) {
-                    const prompt = `You are a headline editor for a major news organization. Generate 3 different compelling headlines for this story.
+                    const prompt = `You are a headline editor for a major broadcast news organization. Generate 3 different compelling headlines for this story in proper broadcast format.
 
-HEADLINE REQUIREMENTS:
+BROADCAST HEADLINE REQUIREMENTS:
 - Create exactly 3 headlines in different styles:
   1. BREAKING NEWS style (urgent, immediate impact)
   2. FEATURE style (storytelling, human interest angle)  
@@ -982,9 +991,11 @@ HEADLINE REQUIREMENTS:
 - Must be factually accurate, no sensationalism
 - Use active voice and strong action verbs
 - Include the most newsworthy element
-- ALL CAPS format for broadcast use
+- ALL CAPS format for broadcast teleprompter use
 - No clickbait - maintain journalistic credibility
-- Each should emphasize different angle
+- Each should emphasize different angle for different platforms
+- Include video clip references when applicable
+- Format for broadcast production workflow
 
 Story content:
 ${text}
@@ -992,30 +1003,40 @@ ${text}
 Format response as:
 BREAKING: [HEADLINE IN ALL CAPS]
 FEATURE: [HEADLINE IN ALL CAPS] 
-SOCIAL: [HEADLINE IN ALL CAPS]`;
+SOCIAL: [HEADLINE IN ALL CAPS]
+
+Include suggested video elements: [CLIP_NAME_##] [TIMECODE] when applicable.`;
 
                     return await this.callAI(prompt, text);
                 }
 
                 async generateTease(text) {
-                    const prompt = `You are a broadcast news producer creating teases for television. Write a compelling 2-sentence tease for this story.
+                    const prompt = `You are a broadcast news producer creating teases for television with complete production specifications.
 
-BROADCAST TEASE REQUIREMENTS:
-- Exactly 2 sentences in ALL CAPS
+BROADCAST TEASE TECHNICAL REQUIREMENTS:
+- Exactly 2 sentences in ALL CAPS for teleprompter
 - First sentence: Create intrigue without revealing the outcome
 - Second sentence: Establish stakes or forward momentum
-- Use present tense and active voice
+- Use present tense and active voice for broadcast delivery
 - Build curiosity that makes viewers stay tuned
-- Don't give away the complete story
+- Don't give away the complete story outcome
 - Include emotional hook or human impact
 - Total length 15-25 seconds when read aloud
 - End with what's happening next or ongoing development
-- Broadcast-ready formatting in ALL CAPS
+- ALL CAPS formatting for broadcast teleprompter use
+- Include video clip specifications when relevant
+- Format: [CLIP_NAME_##] [TIMECODE] for production workflow
+- Specify any special video elements needed
 
 Story content:
 ${text}
 
-Return ONLY the 2-sentence tease in ALL CAPS format. No explanations or additional text.`;
+Return ONLY the 2-sentence tease in ALL CAPS format with:
+- COMPLETE TELEPROMPTER TEXT IN ALL CAPS
+- Video specifications: [clip_name_##] [timecode] in lowercase
+- Production notes when applicable
+
+No explanations or additional text.`;
 
                     return await this.callAI(prompt, text);
                 }
